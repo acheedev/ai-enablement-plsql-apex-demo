@@ -1,4 +1,4 @@
-# Micro-Prompt 2: “Transform Without Distortion”
+# Micro-Prompt 2: "Transform Without Distortion"
 
 ## Goal
 

@@ -1,4 +1,4 @@
-# Micro-Prompt 3: “Structured Output”
+# Micro-Prompt 3: "Structured Output"
 
 ## Goal
 

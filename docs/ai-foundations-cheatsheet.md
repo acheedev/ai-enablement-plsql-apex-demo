@@ -102,6 +102,52 @@ LLMs optimize for *plausibility*, not accuracy.
 
 ---
 
+### **Example:**
+
+
+> ❌ Bad prompt (hallucination bait)
+
+
+“Explain what this procedure does, including all business rules and edge cases. Suggest improvements and describe how it integrates with the rest of the billing system.”
+
+What can go wrong:
+
+- “Integrates with the rest of the billing system” → model might hallucinate:
+
+- “It updates payments and customers tables”
+
+- “It sends email notifications to users”
+
+- “It logs to a central audit log package”
+
+None of that is in the code.
+
+<br />
+
+✅ ***Using your Summarize micro-prompt (Micro-Prompt 4)***
+
+Because you say:
+
+- “Do not invent details, objects, or business rules.”
+
+- “Reference only what is directly present.”
+
+- “If unclear, say UNCERTAIN.”
+
+You get something like:
+
+> “This procedure applies a percentage discount to the total_amount of an invoice identified by p_invoice_id, updates the updated_at timestamp, and when the discount exceeds 50%, inserts an audit record into invoice_audit. Any exception raised is caught by a WHEN OTHERS handler that currently does nothing (TODO comment indicates error handling should be improved).”
+
+No talk about customers, payments, emails, global audit systems.
+It’s locked to what’s in the code.
+
+Failure mode: hallucination<br />
+Defense: negative constraints + UNCERTAIN rule in the summary prompt.
+<br />
+<br />
+
+---
+
 ### **5.2 Reasoning Drift**
 
 **What it is:**
@@ -140,6 +186,60 @@ It predicts text patterns that *sound confident* because training favored that s
 
 ---
 
+### **Example:**
+
+
+> ❌ Bad prompt: “Is this procedure safe and correct? Answer yes or no and explain.”
+
+
+
+The model is heavily biased toward “Yes, looks fine” unless something is hilariously broken. It might gloss over:
+
+- unvalidated p_percent (negative? 200%?)
+
+- silent WHEN OTHERS
+
+- potential for total_amount < 0
+
+You could get something like:
+
+    “Yes, this procedure is safe and correct. It applies a discount and logs high discounts.”
+
+Confident nonsense...
+
+<br />
+
+✅ ***Your Classification micro-prompt (Micro-Prompt 5)***
+
+You’re not asking “is this safe?” — you’re forcing it to label issues by category:
+
+- error_handling: “WHEN OTHERS handler swallows all exceptions with null”
+
+- logic_correctness: “No validation on p_percent; negative or extreme values may corrupt totals”
+
+- data_integrity: “total_amount may become negative if discount is too large”
+
+- uncertainty: “Business rule for maximum allowed discount is unclear”
+
+That structure forces it to:
+
+- look for issues
+
+- label them
+
+- admit uncertainty
+
+No yes/no bullshit.
+No sweeping everything under the rug.
+
+
+Failure mode: overconfidence<br />
+Defense: classification + uncertainty category, not binary judgment.
+<br />
+<br />
+
+---
+
 ### **5.4 Ambiguity Traps**
 
 **What it is:**
@@ -156,6 +256,47 @@ Ambiguous prompts create wide probability ranges, which increases variability.
 * Break tasks into atomic steps (micro-prompts).
 * Use checklists:
   “Perform exactly these three tasks and no others.”
+
+---
+
+### **Example:**
+
+> ❌ Bad prompt: “Optimize this PL/SQL procedure.”
+
+Optimize for what?
+
+- performance?
+
+- readability?
+
+- fewer lines?
+
+- fewer queries?
+
+- CPU? IO?
+
+The model might:
+
+- inline logic
+
+- remove the audit insert because “it isn’t necessary for the main function”
+
+- change exception handling, e.g. logging and re-raising in a way that changes caller behavior
+
+All because “optimize” is vague.
+
+✅ ***Micro-prompt + explicit constraints***
+
+Instead, you’d write a focused prompt like:
+
+“Refactor this procedure for readability and maintainability without changing any behavior or business rules. Do not add or remove any SQL statements. Do not change exception handling semantics. Do not introduce or remove logging.”
+
+That’s not one of our 5 micro-prompts yet, but you understand the pattern now.
+
+Failure mode: ambiguity<br />
+Defense: clear optimization target + hard “do not change behavior” rule.<br />
+<br />
+<br />
 
 ---
 
@@ -186,6 +327,57 @@ Failure mode → Defense pattern
 * Ambiguity → narrow scope + explicit rules
 * Scope explosion → one-task prompts + strict guardrails
 
+---
+
+### **Example:**
+
+
+> ❌ Bad prompt: “Review, refactor, optimize, document, and summarize this procedure.”
+
+
+You’re asking it to:
+
+- Summarize
+
+- Refactor
+
+- Optimize performance
+
+- Document behavior
+
+- Do… everything
+
+That’s a god-prompt. Drift is almost guaranteed:
+
+- It might drastically rewrite the procedure.
+
+- It might “optimize” by removing the audit insert.
+
+- It might change exception behavior.
+
+- It might add validation that changes behavior.
+
+Now you don’t know whether your behavior is intact.
+
+<br />
+
+✅ ***Using micro-prompts in sequence***
+
+Instead you do:
+
+- Summarize (Micro-Prompt 4)
+
+- Classify issues (Micro-Prompt 5)
+
+- Optionally later: a separate refactor prompt that explicitly says:
+
+> “Do not change observable behavior. Preserve all business rules. Only improve readability.”
+
+Because you’ve separated concerns, there’s no scope explosion.<br />
+Each prompt does one thing; you control when and how they’re combined.
+
+Failure mode: drift + scope explosion<br />
+Defense: one-task micro-prompts + explicit behavior-preserving constraints.
 
 ---
 
@@ -195,6 +387,9 @@ Failure mode → Defense pattern
 
 These principles come from thousands of hours of applied LLM work.
 Follow them, and your prompts will behave consistently under pressure.
+
+<br />
+<br />
 
 ---
 
@@ -305,14 +500,14 @@ Separating prompt logic from user-provided code/content reduces confusion.
 
 Use section headers like:
 
-```
+
 [ROLE]
 [CONTEXT]
 [TASK]
 [CONSTRAINTS]
 [OUTPUT]
 [INPUT CODE BELOW]
-```
+
 
 This prevents the model from misinterpreting your instructions as code to analyze.
 

@@ -1,23 +1,3 @@
-# Micro-Prompt 5 — Assign Issue Categories
-
-## Goal
-
-Write a prompt that assigns issue categories to parts of a PL/SQL procedure/function/package
-- stays strictly within what the code shows
-- does not invent behavior
-- does not hallucinate problems
-- uses predefined categories
-- outputs only the classification structure
-
-
-And remember: micro-prompts = atomic
- This prompt should not explain issues, rewrite anything, propose fixes, or summarize.
- It should only classify.
-
----
-### Prompt:
-
-```ini
 [ROLE]
 Act as a principal PL/SQL code reviewer.
 
@@ -62,6 +42,5 @@ Each list may be empty.
 Each entry must be a short, human-readable description of a specific issue.
 The JSON must be syntactically valid.
 
-```
 
 

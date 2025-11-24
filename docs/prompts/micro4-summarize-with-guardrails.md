@@ -1,4 +1,4 @@
-# Micro-Prompt 4 — Summarize With Guardrails (Refined)
+# Micro-Prompt 4: "Summarize With Guardrails" (Refined)
 
 ## Goal
 
@@ -39,3 +39,4 @@ Do not analyze or critique — summarize only.
 Provide one short paragraph (3–5 sentences) containing only the summary.
 No code, no examples, no commentary, no acceptance checks.
 
+```
