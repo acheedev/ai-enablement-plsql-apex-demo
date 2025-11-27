@@ -1,0 +1,3 @@
+{
+  "summary": "The procedure upsert_persons_merge processes rows from the stg_persons_load table in batches limited by the input parameter p_limit. For each batch, it bulk inserts data into the gtt_stg_persons global temporary table, then performs two MERGE operations into the persons table: the first merges rows with non-null emails matching on email, and the second merges rows with null emails but non-null person_id matching on person_id. The procedure commits after each batch and outputs batch size and merge row counts using dbms_output. Timing and error tracking variables are declared but not fully utilized, and some related code is commented out."
+}

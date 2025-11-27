@@ -519,19 +519,6 @@ These twelve laws are your guardrails.
 Every high-quality prompt you build will follow at least 8–10 of them.
 As your projects grow, these laws ensure stability, reliability, and predictable behavior — the exact qualities enterprises require in AI workflows.
 
----
-## ***REMOVE***
-
-If you want, we can continue building:
-
-* **Section 7: Prompt Templates Library (Core Patterns)**
-* **Section 8: AI Governance Principles**
-* **Section 9: LLM Debugging Guide**
-* **Section 10: Failure-Resistant Workflow Patterns**
-
-## ***REMOVE***
-
-
 
 ---
 

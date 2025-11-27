@@ -1,0 +1,130 @@
+[
+  {
+    "version": 1,
+    "started_at": "2025-11-26T19:22:00Z",
+    "input_file": "/home/jachee/code/git/langs/ai-enablement-plsql-apex-demo/scripts/input/plsql_procedure.sql",
+    "model": "DEFAULT",
+    "input_sha256": "8a76baff78adddd0e482648a317f0ce96237fed79176072a33fcc79a98c0eab4",
+    "flags": {
+      "model": null,
+      "no_markdown": false,
+      "no_classification": false,
+      "no_analysis": true,
+      "refactor": false
+    },
+    "steps": [
+      {
+        "timestamp": "2025-11-26T19:22:00Z",
+        "name": "summary",
+        "status": "started"
+      },
+      {
+        "timestamp": "2025-11-26T19:22:03Z",
+        "name": "summary",
+        "status": "success"
+      },
+      {
+        "timestamp": "2025-11-26T19:22:03Z",
+        "name": "classification",
+        "status": "started"
+      },
+      {
+        "timestamp": "2025-11-26T19:22:09Z",
+        "name": "classification",
+        "status": "success"
+      },
+      {
+        "timestamp": "2025-11-26T19:22:09Z",
+        "name": "analysis",
+        "status": "skipped"
+      },
+      {
+        "timestamp": "2025-11-26T19:22:09Z",
+        "name": "refactor",
+        "status": "skipped"
+      }
+    ],
+    "outputs": [
+      {
+        "kind": "summary_json",
+        "path": "/home/jachee/code/git/langs/ai-enablement-plsql-apex-demo/scripts/output/plsql_procedure_summary.json",
+        "sha256": "6e1cd6e3127c091125c9a3a5531a5d0a7c0f791b23bf669372afb15fc34fdd3d"
+      },
+      {
+        "kind": "classification_json",
+        "path": "/home/jachee/code/git/langs/ai-enablement-plsql-apex-demo/scripts/output/plsql_procedure_classification.json",
+        "sha256": "a63dd109b47d789381f09246804ee812d24cee894a3557afb23f01a2fe05f816"
+      },
+      {
+        "kind": "markdown_report",
+        "path": "/home/jachee/code/git/langs/ai-enablement-plsql-apex-demo/scripts/output/plsql_procedure_review.md",
+        "sha256": "ed6bff01dc04a09e399f68a7bd16facae65ddc417499b70998cf4ba827d70978"
+      }
+    ],
+    "runlog_path": "/home/jachee/code/git/langs/ai-enablement-plsql-apex-demo/scripts/logs/plsql-review/plsql_procedure_runlog.json"
+  },
+  {
+    "version": 1,
+    "started_at": "2025-11-26T19:22:52Z",
+    "input_file": "/home/jachee/code/git/langs/ai-enablement-plsql-apex-demo/scripts/input/plsql_procedure.sql",
+    "model": "DEFAULT",
+    "input_sha256": "8a76baff78adddd0e482648a317f0ce96237fed79176072a33fcc79a98c0eab4",
+    "flags": {
+      "model": null,
+      "no_markdown": false,
+      "no_classification": false,
+      "no_analysis": true,
+      "refactor": false
+    },
+    "steps": [
+      {
+        "timestamp": "2025-11-26T19:22:52Z",
+        "name": "summary",
+        "status": "started"
+      },
+      {
+        "timestamp": "2025-11-26T19:22:55Z",
+        "name": "summary",
+        "status": "success"
+      },
+      {
+        "timestamp": "2025-11-26T19:22:55Z",
+        "name": "classification",
+        "status": "started"
+      },
+      {
+        "timestamp": "2025-11-26T19:23:01Z",
+        "name": "classification",
+        "status": "success"
+      },
+      {
+        "timestamp": "2025-11-26T19:23:01Z",
+        "name": "analysis",
+        "status": "skipped"
+      },
+      {
+        "timestamp": "2025-11-26T19:23:01Z",
+        "name": "refactor",
+        "status": "skipped"
+      }
+    ],
+    "outputs": [
+      {
+        "kind": "summary_json",
+        "path": "/home/jachee/code/git/langs/ai-enablement-plsql-apex-demo/scripts/output/plsql_procedure_summary.json",
+        "sha256": "00b1cb547393dc9e723cb9e28e5cefd96cb76192e4e4774019a421f501f57f94"
+      },
+      {
+        "kind": "classification_json",
+        "path": "/home/jachee/code/git/langs/ai-enablement-plsql-apex-demo/scripts/output/plsql_procedure_classification.json",
+        "sha256": "218d4753ef0475590d8cb98b0fc088338f46113a6381a970c739dbd88285853a"
+      },
+      {
+        "kind": "markdown_report",
+        "path": "/home/jachee/code/git/langs/ai-enablement-plsql-apex-demo/scripts/output/plsql_procedure_review.md",
+        "sha256": "c9748b0cfadbf4b1225f4e948fd243f1e586779116a2ef3dad78fa5d61012c56"
+      }
+    ],
+    "runlog_path": "/home/jachee/code/git/langs/ai-enablement-plsql-apex-demo/scripts/logs/plsql-review/plsql_procedure_runlog.json"
+  }
+]

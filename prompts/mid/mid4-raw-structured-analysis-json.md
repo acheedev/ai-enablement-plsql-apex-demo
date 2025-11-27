@@ -16,8 +16,10 @@ Produce the following fields:
 - Output valid JSON only.
 
 [OUTPUT]
+```json
 {
   "summary": "string",
   "concerns": ["string"],
   "questions": ["string"]
 }
+```

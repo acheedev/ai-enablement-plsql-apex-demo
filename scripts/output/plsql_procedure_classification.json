@@ -1,0 +1,28 @@
+{
+  "performance": [
+    "Using two separate MERGE statements on the same target table within each batch may cause unnecessary overhead and reduce performance.",
+    "No use of SAVE EXCEPTIONS in FORALL, which could improve error handling and performance when bulk processing."
+  ],
+  "error_handling": [
+    "No exception handling block present, so any runtime errors will cause the procedure to fail without graceful recovery or logging.",
+    "Variables l_batch_fails, l_num_errors, l_num_success, and l_num_process are declared but never updated or used for error tracking."
+  ],
+  "logic_correctness": [
+    "The procedure inserts all rows from stg_persons_load into gtt_stg_persons without clearing gtt_stg_persons between batches, potentially causing data duplication or incorrect merges.",
+    "The use of NVL(s.person_id, person_seq.nextval) in the INSERT clause may cause inconsistent person_id assignment if s.person_id is NULL, especially since person_seq.nextval is called per row but not guaranteed unique in bulk operations.",
+    "The second MERGE updates p.person_id = s.person_id even though p.person_id is the join key, which may cause unintended changes to primary key values."
+  ],
+  "maintainability": [
+    "Commented-out timing and reporting code at the end reduces code clarity and should be removed or properly implemented.",
+    "Use of dbms_output.put_line for logging is not ideal for production environments and may clutter output."
+  ],
+  "security": [],
+  "data_integrity": [
+    "No validation or checks on input data from stg_persons_load before inserting into gtt_stg_persons, which may lead to invalid or inconsistent data.",
+    "Committing inside the loop after each batch may cause partial commits and complicate rollback in case of errors."
+  ],
+  "uncertainty": [
+    "Unclear if gtt_stg_persons is a global temporary table and whether it is session-specific or transaction-specific, which affects data visibility and cleanup.",
+    "Unclear if person_seq.nextval usage in bulk inserts is safe and consistent without explicit sequencing control."
+  ]
+}
