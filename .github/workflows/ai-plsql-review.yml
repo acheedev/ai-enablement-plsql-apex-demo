@@ -1,0 +1,133 @@
+name: AI PL/SQL Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "sql/**.sql"
+      - "sql/**.pks"
+      - "sql/**.pkb"
+      - "sql/**.pls"
+      - "db/**"
+
+jobs:
+  ai_review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run AI PL/SQL review
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          RUN_ID="${{ github.run_id }}-${{ github.run_attempt }}"
+          mkdir -p scripts/output logs
+          python scripts/ai_plsql_review.py \
+            --path sql \
+            --glob "**/*.sql" \
+            --output-dir scripts/output \
+            --log-dir logs \
+            --run-id "$RUN_ID"
+
+      - name: Upload review artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-review-${{ github.run_id }}
+          path: scripts/output/**
+
+      - name: Fail PR if AI risk threshold exceeded
+        run: |
+          python - << 'PY'
+          import json, glob, sys
+
+          summary_files = glob.glob("scripts/output/*/summary.json")
+          if not summary_files:
+              print("No summary.json found; failing to be safe.", file=sys.stderr)
+              sys.exit(1)
+
+          summary_file = sorted(summary_files)[0]
+          data = json.load(open(summary_file))
+
+          score = data.get("overall_risk_score", 0)
+          red_flags = data.get("red_flags", [])
+
+          print(f"AI overall risk score: {score}")
+          print(f"AI red flags: {len(red_flags)}")
+
+          if score >= 70 or any(
+              (f.get("severity", "").lower() in {"high", "critical"})
+              for f in red_flags
+          ):
+              print("AI gate: FAIL (risk threshold exceeded)")
+              sys.exit(1)
+
+          print("AI gate: PASS")
+          PY
+
+      - name: Post / update PR comment with AI summary
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const core = require('@actions/core');
+
+            function findSummaryMd(root) {
+              const dirs = fs.readdirSync(root);
+              for (const d of dirs) {
+                const fullDir = path.join(root, d);
+                if (!fs.lstatSync(fullDir).isDirectory()) continue;
+                const f = path.join(fullDir, 'summary.md');
+                if (fs.existsSync(f)) return f;
+              }
+              return null;
+            }
+
+            const summaryPath = findSummaryMd('scripts/output');
+            if (!summaryPath) {
+              core.warning('No summary.md found for AI review.');
+              return;
+            }
+
+            const bodyContent = fs.readFileSync(summaryPath, 'utf8');
+            const botTag = '<!-- ai-plsql-review-comment -->';
+            const finalBody = `${botTag}\n${bodyContent}`;
+
+            const { context, github } = require('@actions/github');
+            const prNumber = context.payload.pull_request.number;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              ...context.repo,
+              issue_number: prNumber,
+            });
+
+            const existing = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes(botTag)
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                ...context.repo,
+                comment_id: existing.id,
+                body: finalBody,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                ...context.repo,
+                issue_number: prNumber,
+                body: finalBody,
+              });
+            }
