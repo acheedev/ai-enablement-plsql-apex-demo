@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# python plsql_review.py prc_ex.sql --model gpt-4.1 --no-markdown --output-dir ./out --no-classification --no-analysis
+# python plsql_review.py prc_ex.sql --model gpt-4.1-mini --no-markdown --output-dir ./output --no-classification --no-analysis --refactor
 from dotenv import load_dotenv
 import argparse
 import json

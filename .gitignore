@@ -208,8 +208,6 @@ __marimo__/
 
 # Runtime artifacts
 var/
-scripts/output/
-scripts/logs/
 
 # Python noise
 __pycache__/
